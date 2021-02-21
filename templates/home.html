@@ -1,0 +1,19 @@
+{% extends "layout.html" %} <!-- extends the code written in the layout.html-->
+    {% block content %} <!-- content in here will appear in the content block-->
+        {% for post in posts %} <!-- code written in { % will be read as actual code-->
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#"> {{ post.author }} <!-- attributes are entered this way--> </a>
+                    <small class="text-muted"> {{ post.date_posted }} </small>
+                </div>
+                <h2>
+                    <a class="article-title" href="#">{{ post.title }}</a>
+                </h2>
+                <p class="article-content">
+                    {{ post.content }}
+                </p>
+            </div>
+        </article>
+        {% endfor %} <!-- end of the for loop-->
+    {% endblock content %} <!-- end of the content block-->
