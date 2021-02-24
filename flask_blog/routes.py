@@ -1,17 +1,7 @@
-from flask import Flask, render_template, url_for, flash, redirect #import Flask class from the flask module
-from forms import RegistrationForm, LoginForm
-from flask_sqlalchemy import SQLAlchemy
-app = Flask(__name__) ##app is now an instance of the Flask class, __name__ is a special variable in python that is just the name of the module. Running the script with python directly allows __main__ == __name__
-app.config['SECRET_KEY'] = 'a4eff4b6ed23a99664e3ca63b48210c0'
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///site.db"
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-
+from flask import render_template, url_for, flash, redirect
+from flask_blog import app
+from flask_blog.forms import RegistrationForm, LoginForm
+from flask_blog.models import User, Post
 
 posts = [
     {
@@ -49,7 +39,3 @@ def login():
         else:
             flash('Login failed. Please check username and password.', 'danger')
     return render_template('login.html',form=form, title='Login')
-
-
-if __name__ =='__main__':
-    app.run(debug=True)
