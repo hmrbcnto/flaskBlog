@@ -1,27 +1,21 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from flask_blog import app, bcrypt, db
-from flask_blog.forms import RegistrationForm, LoginForm, UpdateForm
+from flask_blog.forms import RegistrationForm, LoginForm, UpdateForm, NewPostForm
 from flask_blog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
 db.create_all()
-posts = [
-    {
-        'author':'Homer Bacanto',
-        'title': 'Blog Post 1',
-        'content': 'First post content',
-        'date_posted': 'February 20, 2021'
-    }
-]
 
 #what we type into our browser to go into different pages. the below function runs whenever the given route is entered in our website url
 @app.route('/home')
 @app.route('/') 
 def home():
-    return render_template('home.html', posts=posts)
+    post = Post()
+    allPosts = post.query.all()
+    return render_template('home.html', posts=allPosts)
 
 
 #About page route
@@ -121,3 +115,53 @@ def account():
 
     image_file = url_for('static', filename="profile_pictures/" + current_user.image_file)
     return render_template('account.html',title='Account', image_file = image_file, form=form )
+
+
+@app.route('/post/new/', methods=['POST','GET'])
+@login_required
+def new_post():
+    form = NewPostForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        postContent = form.postContent.data
+        author = current_user
+        post = Post(title=title, content=postContent, author=author)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post was created', 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', title='New Post', legend='New Post', form=form)
+
+@app.route('/post/<int:post_id>', methods=['POST','GET'])
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title = post.title, post=post)
+
+@app.route('/post/<int:post_id>/update', methods=['POST','GET'])
+@login_required
+def updatePost(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user != post.author:
+        abort(403) #Manual abort and returns a 403 response
+    form = NewPostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.postContent.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post',post_id=post.id))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.postContent.data = post.content
+    return render_template('new_post.html', title='Update Post', legend='Update Post', form=form)
+
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def deletePost(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user != post.author:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('home'))

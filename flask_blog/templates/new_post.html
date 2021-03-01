@@ -1,0 +1,45 @@
+{% extends "layout.html" %} <!-- extends code written in layout.html-->
+    {% block content %} <!-- code here will be written in the content block -->
+    <div class="content-section">
+        <form method='POST' action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">
+                    {{ legend }}
+                </legend>
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                            <span> {{ error }} </span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                     {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.postContent.label(class="form-control-label") }}
+                    {% if form.postContent.errors %}
+                         {{ form.postContent(class="form-control form-control-lg is-invalid") }}
+                         <div class="invalid-feedback">
+                             {% for error in form.postContent.errors %}
+                                <span> {{ error }} </span>
+                             {% endfor %}
+                         </div>
+                    {% else %}
+                            {{ form.postContent(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                </br>
+                {{ form.submit(class="btn btn-outline-info")}}
+            </div>
+        </form>
+    </div>
+    {% endblock content %} <!-- end of the content block -->
+
+

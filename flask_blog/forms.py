@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_blog.models import User
 from flask_login import current_user
@@ -61,3 +61,11 @@ class UpdateForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Email is taken.')
+
+#New Post form
+class NewPostForm(FlaskForm):
+    title = StringField('Title',
+                        validators=[DataRequired(),Length(min=2)])
+    postContent = TextAreaField('Content',
+                        validators=[DataRequired()])
+    submit = SubmitField('Post')
