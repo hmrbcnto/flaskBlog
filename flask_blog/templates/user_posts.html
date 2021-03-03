@@ -1,5 +1,6 @@
 {% extends "layout.html" %} <!-- extends the code written in the layout.html-->
     {% block content %} <!-- content in here will appear in the content block-->
+            <h1 class="mb-3">Posts by: {{ user.username }} {{ posts.total }}</h1>
             {% for post in posts.items %} <!-- code written in { % will be read as actual code-->
             <article class="media content-section">
                 <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pictures/' + post.author.image_file) }}">
@@ -20,9 +21,9 @@
             {% for page in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
                 {% if page %}
                     {% if posts.page == page %}
-                        <a class="btn btn-info mb-4" href="{{url_for('home', page=page)}}"> {{ page }}</a>
+                        <a class="btn btn-info mb-4" href="{{url_for('user_posts', page=page, username=user.username)}}"> {{ page }}</a>
                     {% else %}
-                        <a class="btn btn-outline-info mb-4" href="{{url_for('home', page=page)}}"> {{ page }}</a>
+                        <a class="btn btn-outline-info mb-4" href="{{url_for('user_posts', page=page, username=user.username)}}"> {{ page }}</a>
                     {% endif %}
                 {% else %}
                     ...
