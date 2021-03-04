@@ -1,6 +1,8 @@
-from flask_blog import db, login_manager
+from flask_blog import db, login_manager, app
 from datetime import datetime
 from flask_login import UserMixin
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
 
 
 
@@ -14,6 +16,20 @@ class User(db.Model, UserMixin):
 
     #Basically, this does an additional query lets us see all posts made by this specific user
     posts = db.relationship('Post', backref='author', lazy=True)
+
+
+    def get_reset_token(self,expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
     def __repr__(self): #how our object is printed when we print it out
         return f"User('{self.username}','{self.email}','{self.image_file}')"
