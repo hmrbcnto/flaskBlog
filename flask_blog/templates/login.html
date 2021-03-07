@@ -23,15 +23,16 @@
                 <div class="form-group">
                     </br>
                     {{ form.submit(class="btn btn-outline-info")}}
+                    <small class="text-muted ml-2">
+                        <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
+                    </small>
                 </div>
-                <small class="text-muted ml-2">
-                    <a href="#">Forgot Password?</a>
-                </small>
-                <small class="text-muted">
-                </br>
-                    <a href="{{ url_for('registration')}}">Sign Up Now</a>
-                </small>
+               
 
             </form>
         </div>
+            <small class="text-muted">
+                Need an account? <a href="{{ url_for('registration')}}">Sign Up Now</a>
+            </small>
+       
     {% endblock content %}
