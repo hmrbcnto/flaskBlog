@@ -4,12 +4,12 @@
             <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pictures/' + post.author.image_file) }}">
             <div class="media-body">
                 <div class="article-metadata">
-                    <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}"> {{ post.author.username }} <!-- attributes are entered this way--> </a>
+                    <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}"> {{ post.author.username }} <!-- attributes are entered this way--> </a>
                     <small class="text-muted"> {{ post.date_posted.strftime('%Y-%m-%d') }} </small>
                     {% if post.author == current_user %}
                         <div>
-                            <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('updatePost', post_id=post.id) }}"> Update </a>
-                            <form action="{{ url_for('deletePost', post_id = post.id) }}" method="POST"><input type="submit" name="delete" class="btn-danger btn-sm m-1 btn" value="Delete"></form>
+                            <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('posts.updatePost', post_id=post.id) }}"> Update </a>
+                            <form action="{{ url_for('posts.deletePost', post_id = post.id) }}" method="POST"><input type="submit" name="delete" class="btn-danger btn-sm m-1 btn" value="Delete"></form>
                         </div>
                     {% endif %}
                 </div>
