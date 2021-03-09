@@ -4,35 +4,45 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_blog.config import Config
 import os
 
-#Initialize app
-app = Flask(__name__)
 
-#Configuring app secret key
-app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 
-#Configuring .db file location. Triple forward slash means CWD
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 #Creating an instance of our database
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 #Creating an instance of our encryptor
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt()
 
 #Creating an instance of our login manager
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager = LoginManager()
+login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info' #Basically a bootstrap class
 
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'temycatdragonsa@gmail.com'
-app.config['MAIL_PASSWORD'] = 'dglfpbwhngsuoexq'
-
-mail = Mail(app)
+mail = Mail()
 
 
-from flask_blog import routes
+
+
+def create_app(config_class=Config):
+    #Initialize app
+    app = Flask(__name__)
+
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+
+    #Config settings
+    app.config.from_object(Config)
+
+    from flask_blog.users.routes import users
+    from flask_blog.posts.routes import posts
+    from flask_blog.main.routes import main
+    app.register_blueprint(users)
+    app.register_blueprint(posts)
+    app.register_blueprint(main)
+
+    return app
